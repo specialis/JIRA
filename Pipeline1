@@ -1,0 +1,25 @@
+#!groovy
+// Check "sergey@192.168.137.134" properties
+properties([disableConcurrentBuilds()]) // запретить параллельные сборки, чтобы не было ошибок
+
+pipeline {
+    agent { 
+        label 'master' // на какой машине будем собирать (указываем машины на которых есть пользователь Jenkins)
+        }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10')) // будем хранить логи и артефакты последних 10 сборок
+        timestamps() // делать временные отметки
+    }
+    stages {
+        stage("First step") {
+            steps {
+                sh 'ssh sergey@192.168.137.134 \'hostname\''
+            }
+        }
+        stage("Second step") {
+            steps {
+                sh 'ssh sergey@192.168.137.134 \'uptime\''
+            }
+        }
+    }
+}
